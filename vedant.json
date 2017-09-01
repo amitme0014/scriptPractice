@@ -1,0 +1,51 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Launch an EC2 instance",
+    "Parameters": {
+        "KeyName": {
+            "Description": "Key Pair Name",
+            "Type": "AWS::EC2::KeyPair::KeyName",
+            "Default": "trainee_demo_shubham"
+        },
+        "InstanceType": {
+            "Description": "Select one of these",
+            "Type": "String",
+            "Default": "t2.micro",
+            "AllowedValues": ["t2.micro", "t2.small", "t2.medium"]
+        },
+		"BucketName" : {
+		"Description" : "Give BucketName",
+		"Type" : "String"
+		}
+    },
+    "Resources": {
+        "Server": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "ImageId": "ami-aa5ebdd2",
+                "InstanceType": {"Ref": "InstanceType"},
+                "KeyName": {"Ref": "KeyName"},
+                "UserData": {
+				"Fn::Base64" :{
+				"Fn::Join": [
+				"", [
+                    "#!/bin/bash \n",
+                    "yum update -y \n", 
+                    "yum install htop -y \n",
+					"yum install jenkins -y \n"
+                ]]}
+                }
+            }
+        },
+		"S3Bucket":{
+		"Type":"AWS::S3::Bucket",
+		"Description":"This will launch an s3 bucket",
+		"Properties":{
+		"BucketName": {"Ref":"BucketName"}
+		}
+		
+		}
+    },
+    "Outputs": {
+    }
+}
